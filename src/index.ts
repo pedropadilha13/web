@@ -1,33 +1,16 @@
-import { User } from './models/User';
+import { UserList } from './views/UserList';
+import { Collection } from './models/Collection';
+import { User, UserProps } from './models/User';
 
-const collection = User.buildUserCollection();
-
-collection.on('change', () => {
-  console.log(collection);
+const users = new Collection('http://localhost:3000/users', (json: UserProps) => {
+  return User.buildUser(json);
 });
 
-collection.fetch();
+users.on('change', () => {
+  const root = document.getElementById('root');
+  if (root) {
+    new UserList(root, users).render();
+  }
+});
 
-// const user = new User({ name: 'perdo', age: 21 });
-// const user = User.buildUser({ id: 1 });
-
-// user.on('change', () => {
-//   console.log(user);
-// });
-
-// user.on('save', () => {
-//   console.log('User saved!', user.getAll());
-// });
-
-// user.fetch();
-
-// user.set({ name: 'perdo' });
-// user.set({ age: 20 });
-// user.save();
-
-// user.fetch();
-// user.set({ age: 21 });
-// user.save();
-
-// user.set({ name: 'New name' });
-// console.log(user);
+users.fetch();
